@@ -8,7 +8,7 @@ namespace Application.Application.Commands.Categories;
 
 public record CreateCategoryCommand(CategoryCreateDto Dto) : BaseRequest, IRequest<ApplicationResponse<CategoryResponseDto>>;
 
-public class RegisterUserHandler(ICategoryService categoryService, IMapper mapper) : IRequestHandler<CreateCategoryCommand, ApplicationResponse<CategoryResponseDto>> {
+public class CreateCategoryHandler(ICategoryService categoryService, IMapper mapper) : IRequestHandler<CreateCategoryCommand, ApplicationResponse<CategoryResponseDto>> {
 
     private readonly ICategoryService _categoryService = categoryService;
     private readonly IMapper _mapper = mapper;

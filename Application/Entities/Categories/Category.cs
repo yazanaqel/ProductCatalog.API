@@ -2,7 +2,7 @@
 
 namespace Application.Entities.Categories;
 public class Category {
-    public string CategoryId { get; set; } = string.Empty;
+    public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
 
     public virtual ApplicationUser User { get; set; }

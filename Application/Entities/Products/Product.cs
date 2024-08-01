@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Entities.Products;
 public class Product {
-    public string ProductId { get; set; } = string.Empty;
+    public int ProductId { get; set; }
     public string ProductName { get; set; } = string.Empty;
 
 

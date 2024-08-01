@@ -1,4 +1,5 @@
-﻿using Application.Entities.Categories;
+﻿using Application.Application.Abstractions;
+using Application.Entities.Categories;
 using Application.Entities.Products;
 using Application.Entities.Users;
 using Infrastructure.SqlServerDb;
@@ -29,7 +30,7 @@ public static class DependencyInjection {
         })
     .AddEntityFrameworkStores<ProductCategoryDbContext>();
 
-        //services.AddScoped<IDbContext>(factory => factory.GetRequiredService<ProductCategoryDbContext>());
+        services.AddScoped<IDbContext>(factory => factory.GetRequiredService<ProductCategoryDbContext>());
 
         services.AddScoped<IUserService, UserRepository>();
         services.AddScoped<ICategoryService, CategoryRepository>();

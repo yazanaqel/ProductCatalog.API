@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dtos.Categories;
-internal class CategoryUpdateDto {
+public class CategoryUpdateDto {
+    [Required]
+    public required int CategoryId { get; set; }
+    [Required, MaxLength(15)]
+    public required string CategoryName { get; set; }
 }

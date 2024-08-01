@@ -1,6 +1,6 @@
 ﻿namespace Application.Entities.Products;
 public interface IProductService {
-    Task<ApplicationResponse<Product>> CreateProduct(Product product);
-    Task<ApplicationResponse<Product>> UpdateProduct(Product product, string userId);
-    Task<ApplicationResponse<Product>> DeleteProduct(string productId, string userId);
+    Task<ApplicationResponse<Product>> CreateProduct(Product product, List<int> categoriesList);
+    Task<ApplicationResponse<Product>> UpdateProduct(Product product);
+    Task<ApplicationResponse<Product>> DeleteProduct(int productId, string userId);
 }

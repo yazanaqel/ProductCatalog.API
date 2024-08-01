@@ -20,8 +20,9 @@ public static class CustomConstants {
     }
     public static class NotFound {
         public static string Product = "Product Not Found!";
+        public static string Category = "Category Not Found!";
         public static string NoProducts = "No Products Found!";
-        public static string Attribute = "Attribute Not Found!";
+        public static string NoCategories = "Category Not Found!";
         public static string Variant = "Variant Not Found!";
     }
 }
