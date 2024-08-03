@@ -1,0 +1,89 @@
+﻿@page "/category"
+@page "/category/{id:int}"
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<h3>Category</h3>
+
+@if(Id is null)
+{
+    <PageTitle>Create</PageTitle>
+    <h3>Create a new Category</h3>
+}
+else
+{
+    <PageTitle>Edit @category.CategoryName</PageTitle>
+    <h3>Edit @category.CategoryName</h3>
+}
+
+<EditForm Model="category" OnSubmit="HandleSubmit">
+    <div>
+        <label for="title">Category Name</label>
+        <InputText id="title" @bind-Value="category.CategoryName" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    <button type="button" class="btn btn-danger"
+            @onclick="DeleteCategory">
+        Delete This Category
+    </button>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    string btnText = string.Empty;
+
+    CategoryCreateDto category = new CategoryCreateDto();
+
+    protected override void OnInitialized()
+    {
+        btnText = Id == null ? "Save New Category" : "Update Category";
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(Id is not null)
+        {
+            var result = await CategoryService.GetCategoryById((int)Id);
+
+            if(result is not null)
+                category.CategoryName = result.Data.CategoryName;
+
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if(Id is null)
+        {
+            await CategoryService.CreateCategory(category);
+
+        }
+        else
+        {
+            CategoryUpdateDto updateCategory = new CategoryUpdateDto()
+                {
+                    CategoryId = (int)Id,
+                    CategoryName = category.CategoryName
+                };
+
+            await CategoryService.UpdateCategory(updateCategory);
+
+
+        }
+        NavigationManager.NavigateTo("/categories");
+    }
+
+    async Task DeleteCategory()
+    {
+        if(Id is not null)
+        {
+            await CategoryService.DeleteCategory((int)Id);
+        }
+        NavigationManager.NavigateTo("/categories");
+    }
+}

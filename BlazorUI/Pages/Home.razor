@@ -1,0 +1,20 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+
+<AuthorizeView>
+    <Authorized>
+           You're Logged in :)
+    </Authorized>
+    <NotAuthorized>
+
+        <h1>Hello,</h1>
+
+        Welcome :)
+        <br />
+        <div>
+            <a href="register">Register Here</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

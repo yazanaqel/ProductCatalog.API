@@ -1,0 +1,72 @@
+﻿@page "/categories"
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Categories</PageTitle>
+
+<h1>Categories</h1>
+
+
+@if(categories == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category Id</th>
+                <th>Category Name</th>
+                <th>Display Related Products</th>
+                <AuthorizeView>
+                    <Authorized>
+                        <th>Modify This Category</th>
+                    </Authorized>
+                </AuthorizeView>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var category in categories)
+            {
+                <tr>
+                    <td>@category.CategoryId</td>
+                    <td>@category.CategoryName</td>
+                    <td><a href="/product/@category.CategoryId" class="btn btn-outline-success">Details</a></td>
+                    <AuthorizeView>
+                        <Authorized>
+                            <td><a href="/category/@category.CategoryId" class="btn btn-outline-warning">Modify</a></td>
+                        </Authorized>
+                    </AuthorizeView>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<AuthorizeView>
+    <Authorized>
+        <button class="btn btn-primary"
+                @onclick="CreateNewCategory">
+            Create New Category
+        </button>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private IReadOnlyList<BlazorUI.Services.Category.CategoriesResponseDto> categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await CategoryService.GetAllCategories();
+
+        categories = result.Data;
+    }
+
+
+    void CreateNewCategory()
+    {
+        NavigationManager.NavigateTo("/category");
+    }
+
+}

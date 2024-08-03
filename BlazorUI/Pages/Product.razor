@@ -1,0 +1,60 @@
+﻿@page "/product/{id:int}"
+@inject IProductService ProductsService
+
+<h3>Product</h3>
+
+
+@if(products == null)
+{
+    <p><em>@Message</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Id</th>
+                <th>Product Name</th>
+                <th>Product Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var product in products)
+            {
+                <tr>
+                    <td>@product.ProductId</td>
+                    <td>@product.ProductName</td>
+                    <td>@product.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    public string Message { get; set; } = "Loading...";
+
+    private IReadOnlyList<BlazorUI.Services.Product.ProductsResponseDto> products;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(Id is not null)
+        {
+            var result = await ProductsService.GetProductsByCategory((int)Id);
+
+            if(result is not null && result.Data is not null)
+            {
+                products = result.Data;
+            }
+            else
+            {
+                Message = result.Message;
+            }
+        }
+    }
+}

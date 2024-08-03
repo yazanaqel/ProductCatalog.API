@@ -20,7 +20,7 @@ public class ProductController(IMediator mediator) : ControllerBase
     {
         var response = await _mediator.Send(new GetProductsByCategoryQuery(categoryId));
 
-        return response.Success ? Ok(response) : NotFound(response.Message);
+        return Ok(response);
     }
 
     [HttpPost("CreateProduct")]

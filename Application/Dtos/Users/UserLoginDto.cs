@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dtos.Users;
-public class UserLoginDto {
-    [Required, EmailAddress]
-    public required string Email { get; set; }
+public class UserLoginDto
+{
+    [Required, EmailAddress(ErrorMessage = "Email Address is required")]
+    public string Email { get; set; } = string.Empty;
 
     [Required]
-    public required string Password { get; set; }
+    public string Password { get; set; } = string.Empty;
 }

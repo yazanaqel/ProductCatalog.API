@@ -1,0 +1,52 @@
+﻿@page "/Register"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Register</PageTitle>
+
+<h3>Register</h3>
+
+<EditForm Model="user" OnSubmit="HandleRegister">
+    <div class="form-group">
+        <label for="firstName">FirstName</label>
+        <InputText id="firstName" @bind-Value="user.FirstName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="lastName">LastName</label>
+        <InputText id="lastName" @bind-Value="user.LastName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="user.Email" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="user.Password" type="password" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="passwordConfirm">Password Confirm</label>
+        <InputText id="passwordConfirm" @bind-Value="user.PasswordConfirm" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    UserRegisterDto user = new UserRegisterDto();
+
+    private async void HandleRegister()
+    {
+
+        var result = await UserService.Register(user);
+
+        if(result.Data is not null)
+        {
+            await LocalStorage.SetItemAsync("JwtToken",result.Data.SecurityStamp);
+
+            await AuthStateProvider.GetAuthenticationStateAsync();
+
+            NavigationManager.NavigateTo("");
+        }
+    }
+}
