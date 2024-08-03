@@ -87,8 +87,42 @@ internal class ProductRepository(ProductCategoryDbContext dbContext) : IProductS
     }
 
 
-    public Task<ApplicationResponse<Product>> UpdateProduct(Product product)
+    public async Task<ApplicationResponse<Product>> UpdateProduct(Product product)
     {
-        throw new NotImplementedException();
+        var applicationResponse = new ApplicationResponse<Product>();
+
+        try
+        {
+            var checkProduct = await _dbContext.Products
+                .Where(c => (c.UserId == product.UserId) && (c.ProductId == product.ProductId))
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+
+
+            if(checkProduct is null)
+            {
+                applicationResponse.Message = CustomConstants.NotFound.Product;
+                return applicationResponse;
+            }
+
+            _dbContext.Products.Update(product);
+            await _dbContext.SaveChangesAsync();
+
+            applicationResponse.Data = product;
+            applicationResponse.Success = true;
+        }
+        catch(DbUpdateException ex)
+        {
+
+            var sqlException = ex.InnerException as SqlException;
+
+            if(sqlException != null)
+            {
+
+                applicationResponse.Message = sqlException.Message;
+            }
+        }
+
+        return applicationResponse;
     }
 }

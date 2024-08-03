@@ -22,7 +22,23 @@ public class ProductController(IMediator mediator) : ControllerBase
 
         return Ok(response);
     }
+    [AllowAnonymous]
+    [HttpGet("GetAllProducts")]
+    public async Task<ActionResult<ApplicationResponse<IReadOnlyList<ProductsResponseDto>>>> GetAllProducts()
+    {
+        var response = await _mediator.Send(new GetAllProductsQuery());
 
+        return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("GetProductById")]
+    public async Task<ActionResult<ApplicationResponse<ProductResponseDto>>> GetProductById([Required] int productId)
+    {
+        var response = await _mediator.Send(new GetProductByIdQuery(productId));
+
+        return Ok(response);
+    }
     [HttpPost("CreateProduct")]
     public async Task<ActionResult<ApplicationResponse<ProductResponseDto>>> CreateProduct(ProductCreateDto dto)
     {

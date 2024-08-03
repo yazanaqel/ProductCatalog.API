@@ -1,60 +1,107 @@
-﻿@page "/product/{id:int}"
-@inject IProductService ProductsService
+﻿@page "/product"
+@page "/product/{id:int}"
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
 
 <h3>Product</h3>
 
-
-@if(products == null)
+@if(Id is null)
 {
-    <p><em>@Message</em></p>
+    <PageTitle>Create</PageTitle>
+    <h3>Create a new Product</h3>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Product Id</th>
-                <th>Product Name</th>
-                <th>Product Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var product in products)
-            {
-                <tr>
-                    <td>@product.ProductId</td>
-                    <td>@product.ProductName</td>
-                    <td>@product.Price</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <PageTitle>Edit @product.ProductName</PageTitle>
+    <h3>Edit @product.ProductName</h3>
 }
+
+<EditForm Model="product" OnSubmit="HandleSubmit">
+    <div>
+        <label for="productName">Product Name</label>
+        <InputText id="productName" @bind-Value="product.ProductName" class="form-control" />
+    </div>
+    <div>
+        <label for="price">Product Price</label>
+        <InputNumber id="price" @bind-Value="product.Price" class="form-control" />
+    </div>
+    <div>
+        <label for="description">Product Description</label>
+        <InputText id="description" @bind-Value="product.Description" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+
+    @if(Id is not null)
+    {
+        <button type="button" class="btn btn-danger"
+                @onclick="DeleteProduct">
+            Delete This Product
+        </button>
+    }
+
+</EditForm>
 
 
 @code {
-
     [Parameter]
     public int? Id { get; set; }
 
-    public string Message { get; set; } = "Loading...";
+    string btnText = string.Empty;
 
-    private IReadOnlyList<BlazorUI.Services.Product.ProductsResponseDto> products;
+    ProductCreateDto product = new ProductCreateDto();
+
+    protected override void OnInitialized()
+    {
+        btnText = Id == null ? "Save New Product" : "Update Product";
+    }
 
     protected override async Task OnParametersSetAsync()
     {
         if(Id is not null)
         {
-            var result = await ProductsService.GetProductsByCategory((int)Id);
+            var result = await ProductService.GetProductById((int)Id);
 
-            if(result is not null && result.Data is not null)
-            {
-                products = result.Data;
-            }
-            else
-            {
-                Message = result.Message;
-            }
+            if(result is not null)
+
+                product.ProductName = result.Data.ProductName;
+            product.Price = result.Data.Price;
+            product.Description = result.Data.Description;
+
         }
+    }
+
+    async Task HandleSubmit()
+    {
+        if(Id is null)
+        {
+            await ProductService.CreateProduct(product);
+
+        }
+        else
+        {
+            ProductUpdateDto updateProduct = new ProductUpdateDto()
+                {
+                    ProductId = (int)Id,
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    Description = product.Description
+                };
+
+            await ProductService.UpdateProduct(updateProduct);
+
+
+        }
+        NavigationManager.NavigateTo("/products");
+    }
+
+    async Task DeleteProduct()
+    {
+        if(Id is not null)
+        {
+            await ProductService.DeleteProduct((int)Id);
+        }
+        NavigationManager.NavigateTo("/products");
     }
 }
