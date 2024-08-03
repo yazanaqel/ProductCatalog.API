@@ -10,7 +10,7 @@
 
 @if(categories == null)
 {
-    <p><em>Loading...</em></p>
+    <p><em>@Message</em></p>
 }
 else
 {
@@ -54,13 +54,23 @@ else
 </AuthorizeView>
 
 @code {
+
+    public string Message { get; set; } = "Loading...";
+
     private IReadOnlyList<BlazorUI.Services.Category.CategoriesResponseDto> categories;
 
     protected override async Task OnInitializedAsync()
     {
         var result = await CategoryService.GetAllCategories();
 
-        categories = result.Data;
+        if(result is not null && result.Data is not null)
+        {
+            categories = result.Data;
+        }
+        else
+        {
+            Message = result.Message;
+        }
     }
 
 

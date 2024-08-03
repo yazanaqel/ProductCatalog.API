@@ -1,8 +1,11 @@
 ﻿@page "/product"
 @page "/product/{id:int}"
 @inject IProductService ProductService
+@inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
+
+
 
 <h3>Product</h3>
 
@@ -30,6 +33,19 @@ else
         <label for="description">Product Description</label>
         <InputText id="description" @bind-Value="product.Description" class="form-control" />
     </div>
+    <div>
+        <label for="categories">Product Categories</label>
+        <InputSelect @bind-Value="product.CategoriesList" class="form-control">
+            @if(categories is not null)
+            {
+                @foreach(var category in categories)
+                {
+                    <option>@category.CategoryName</option>
+                }
+            }
+        </InputSelect>
+    </div>
+
     <br />
     <button type="submit" class="btn btn-primary">@btnText</button>
 
@@ -45,12 +61,17 @@ else
 
 
 @code {
+
     [Parameter]
     public int? Id { get; set; }
 
     string btnText = string.Empty;
 
-    ProductCreateDto product = new ProductCreateDto();
+    private ProductCreateDto product = new ProductCreateDto();
+    private IReadOnlyList<BlazorUI.Services.Category.CategoriesResponseDto> categories;
+
+
+
 
     protected override void OnInitialized()
     {
@@ -64,11 +85,17 @@ else
             var result = await ProductService.GetProductById((int)Id);
 
             if(result is not null)
-
-                product.ProductName = result.Data.ProductName;
+            
+            product.ProductName = result.Data.ProductName;
             product.Price = result.Data.Price;
             product.Description = result.Data.Description;
 
+        }
+        else
+        {
+            var result = await CategoryService.GetAllCategories();
+
+            categories = result.Data;
         }
     }
 

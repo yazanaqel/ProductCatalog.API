@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ProductCategoryDbContext))]
-    [Migration("20240731230641_Initial")]
+    [Migration("20240803130831_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -324,7 +324,7 @@ namespace Infrastructure.Migrations
                     b.HasOne("Application.Entities.Products.Product", "Product")
                         .WithMany("ProductCategories")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
